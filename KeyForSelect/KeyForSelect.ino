@@ -1,6 +1,8 @@
 #include "Keyboard.h"
+#include <Wire.h>
 
 //Ad: https://qiita.com/MergeCells/items/17bdc1c1fb35949195b5
+
 
 #define UpKey 2
 #define UpLed 3
@@ -15,8 +17,12 @@
 #define EscKey 12
 #define CoinKey 13
 
+
 void setup() {
   Keyboard.begin();
+  Wire.begin();
+  Serial.begin(9600);
+  
   pinMode(UpKey, INPUT_PULLUP);
   pinMode(UpLed, OUTPUT);
   pinMode(DownKey, INPUT_PULLUP);
@@ -31,7 +37,10 @@ void setup() {
   pinMode(CoinKey, INPUT_PULLUP);
 }
 
+
 void loop() {
+   Wire.requestFrom(8, 1);// request 1 bytes from Slave ID #8
+    
   if(digitalRead(UpKey) == LOW) KeyFunction(UpKey, KEY_UP_ARROW);
   if(digitalRead(DownKey) == LOW) KeyFunction(DownKey, KEY_DOWN_ARROW);
   if(digitalRead(LeftKey) == LOW) KeyFunction(LeftKey, KEY_LEFT_ARROW);
@@ -42,10 +51,10 @@ void loop() {
   delay(100);
 }
 
+
 void KeyFunction(char Key, char KeyType){
     Keyboard.press(KeyType);
     delay(100);
     Keyboard.releaseAll();
     while(digitalRead(Key) == LOW);
 }
-
